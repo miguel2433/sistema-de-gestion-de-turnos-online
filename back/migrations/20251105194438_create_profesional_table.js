@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  await knex.schema.createTable("profesionales", (table) => {
+  await knex.schema.createTable("profesional", (table) => {
     table.increments("id_profesional").primary();
     table.string("nombre", 100).notNullable();
     table.string("apellido", 100).notNullable();
@@ -20,12 +20,12 @@ export async function up(knex) {
       .unsigned()
       .notNullable()
       .references("id_especialidad")
-      .inTable("especialidades")
+      .inTable("especialidad")
       .onUpdate("CASCADE")
       .onDelete("CASCADE");
   });
 }
 
 export async function down(knex) {
-  await knex.schema.dropTableIfExists("profesionales");
+  await knex.schema.dropTableIfExists("profesional");
 }

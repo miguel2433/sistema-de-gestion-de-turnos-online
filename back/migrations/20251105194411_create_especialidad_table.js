@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 export async function up(knex) {
-  await knex.schema.createTable("especialidades", (table) => {
+  await knex.schema.createTable("especialidad", (table) => {
     table.increments("id_especialidad").primary();
     table.string("nombre_especialidad", 100).notNullable().unique();
     table.text("descripcion");
@@ -13,5 +13,5 @@ export async function up(knex) {
 }
 
 export async function down(knex) {
-  await knex.schema.dropTableIfExists("especialidades");
+  await knex.schema.dropTableIfExists("especialidad");
 }

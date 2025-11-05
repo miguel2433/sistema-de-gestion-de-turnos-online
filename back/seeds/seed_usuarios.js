@@ -4,10 +4,10 @@
  */
 export async function seed(knex) {
   // Borra datos anteriores
-  await knex("usuarios").del();
+  await knex("usuario").del();
 
   // Inserta nuevos registros
-  await knex("usuarios").insert([
+  await knex("usuario").insert([
     {
       nombre: "Admin",
       email: "admin@example.com",
