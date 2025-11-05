@@ -1,22 +1,20 @@
-import dotenv from "dotenv"
-
+import dotenv from "dotenv";
 dotenv.config();
 
-// knexfile.js
-module.exports = {
+export default {
   development: {
-    client: 'mysql2',
+    client: "mysql2",
     connection: {
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
-      database: process.env.DB_NAME
+      database: process.env.DB_NAME,
     },
     migrations: {
-      directory: './migrations'
+      directory: "./migrations",
     },
     seeds: {
-      directory: './seeds'
-    }
-  }
+      directory: "./seeds",
+    },
+  },
 };
