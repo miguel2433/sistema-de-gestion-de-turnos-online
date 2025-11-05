@@ -59,11 +59,11 @@ export async function up(knex) {
       .onUpdate("CASCADE");
 
     table
-      .integer("id_paciente")
+      .integer("id_usuario")
       .unsigned()
       .notNullable()
-      .references("id_paciente")
-      .inTable("paciente")
+      .references("id_usuario")
+      .inTable("usuario")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
   });

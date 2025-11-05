@@ -9,7 +9,7 @@ export async function seed(knex) {
   // Insertamos turnos de ejemplo
   await knex("turno").insert([
     {
-      id_paciente: 1, // Laura Pérez
+      id_usuario: 1, // Laura Pérez
       id_profesional: 1, // Profesional existente
       id_sede: 1, // Sede existente
       id_especialidad: 1, // Especialidad existente
@@ -20,7 +20,7 @@ export async function seed(knex) {
       observaciones: "Paciente primer turno",
     },
     {
-      id_paciente: 2, // Martín Gómez
+      id_usuario: 2, // Martín Gómez
       id_profesional: 2,
       id_sede: 1,
       id_especialidad: 2,
@@ -31,7 +31,7 @@ export async function seed(knex) {
       observaciones: "",
     },
     {
-      id_paciente: 3, // Ana Torres
+      id_usuario: 3, // Ana Torres
       id_profesional: 3,
       id_sede: 2,
       id_especialidad: 3,
