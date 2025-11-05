@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 
-dotenv.config
+dotenv.config();
 
 // knexfile.js
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
-      database: 'nombre_de_tu_db'
+      database: process.env.DB_NAME
     },
     migrations: {
       directory: './migrations'
