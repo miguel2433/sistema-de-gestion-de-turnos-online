@@ -20,6 +20,7 @@ export async function seed(knex) {
       telefono: "1123456789",
       matricula: "MAT-1001",
       password: hashedPassword,
+      id_rol: 2,
       activo: true,
       id_especialidad: 1, 
     },
@@ -30,6 +31,7 @@ export async function seed(knex) {
       telefono: "1123987654",
       matricula: "MAT-1002",
       password: hashedPassword,
+      id_rol: 2,
       activo: true,
       id_especialidad: 2, // Dermatología
     },
@@ -40,6 +42,7 @@ export async function seed(knex) {
       telefono: "1134567890",
       matricula: "MAT-1003",
       password: hashedPassword,
+      id_rol: 2,
       activo: true,
       id_especialidad: 3, // Pediatría
     },

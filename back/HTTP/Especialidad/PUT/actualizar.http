@@ -1,0 +1,8 @@
+PUT http://localhost:3000/especialidades/6
+Content-Type: application/json
+
+{
+  "nombre_especialidad": "Algomedio",
+  "descripcion": "Atención del medicobro",
+  "activa": true
+}

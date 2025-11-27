@@ -1,4 +1,5 @@
 import {z, ZodDefault} from "zod"
+import {rolSchema} from "./rol.js"
 
 
 export const usuarioSchema = z.object({
@@ -31,6 +32,6 @@ export const usuarioSchema = z.object({
     invalid_type_error: "El dni debe ser un texto"
   }).min(7).max(8),
   activo:z.union([z.boolean(), z.number().transform((n) => Boolean(n))]),
-  rol: z.enum(['paciente','admin','recepcionista',]).default('paciente').optional(),
+  rol:rolSchema.pick({id_rol:true,nombre_rol:true,descripcion:true}),
   fecha_creacion: z.date().optional()
 });

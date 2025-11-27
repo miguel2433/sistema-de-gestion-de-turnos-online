@@ -1,0 +1,14 @@
+POST http://localhost:3000/profesionales
+Content-Type: application/json
+
+{
+  "nombre": "Ana",
+  "apellido": "García",
+  "email": "ana@example.com",
+  "telefono": "1144556677",
+  "matricula": "MAT-123",
+  "password": "Secret123!",
+  "id_especialidad": 1,
+  "activo": true,
+  "rol": { "id_rol": 2 }
+}

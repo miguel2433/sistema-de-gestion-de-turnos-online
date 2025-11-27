@@ -1,0 +1,7 @@
+PUT http://localhost:3000/sedes/1
+Content-Type: application/json
+
+{
+  "telefono": "1166778800",
+  "activa": true
+}

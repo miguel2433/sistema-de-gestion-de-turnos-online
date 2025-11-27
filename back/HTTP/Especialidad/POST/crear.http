@@ -1,0 +1,8 @@
+POST http://localhost:3000/especialidades
+Content-Type: application/json
+
+{
+  "nombre_especialidad": "Radiología",
+  "descripcion": "Atención radiológica",
+  "activa": true
+}

@@ -1,0 +1,11 @@
+POST http://localhost:3000/sedes
+Content-Type: application/json
+
+{
+  "nombre": "Sede Centro",
+  "direccion": "Av. Principal 123",
+  "telefono": "1166778899",
+  "activa": true,
+  "horario_apertura": "08:00",
+  "horario_cierre": "18:00"
+}

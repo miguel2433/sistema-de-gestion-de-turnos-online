@@ -5,6 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "init-db": "node scripts/init-db.js",
+    "migrate": "npx knex migrate:latest",
+    "seed": "npx knex seed:run",
+    "start": "node --watch app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

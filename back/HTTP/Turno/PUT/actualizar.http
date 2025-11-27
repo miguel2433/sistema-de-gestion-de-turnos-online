@@ -1,0 +1,6 @@
+PUT http://localhost:3000/turnos/1
+Content-Type: application/json
+
+{
+  "estado": "confirmado"
+}

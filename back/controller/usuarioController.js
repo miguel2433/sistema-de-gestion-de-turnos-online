@@ -1,14 +1,17 @@
 import { usuarioRepository } from "../repositories/usuarioRepository.js";
+import { usuarioSchema } from "../models/usuario.js";
 
 export const usuarioController = {
   async listar(req, res) {
     try {
       const usuarios = await usuarioRepository.getAll();
-
-      return res.status(200).json({
-        ok: true,
-        data: usuarios,
+      const data = usuarios.map((u) => {
+        const { password, ...rest } = u;
+        const parsed = usuarioSchema.omit({ password: true }).safeParse(rest);
+        return parsed.success ? parsed.data : rest;
       });
+
+      return res.status(200).json({ ok: true, data });
     } catch (error) {
       console.error("Error en usuarioController.listar:", error.message);
 
@@ -31,11 +34,11 @@ export const usuarioController = {
       }
 
       const usuario = await usuarioRepository.getUserByEmail(email);
+      const { password, ...rest } = usuario;
+      const parsed = usuarioSchema.omit({ password: true }).safeParse(rest);
+      const data = parsed.success ? parsed.data : rest;
 
-      return res.status(200).json({
-        ok: true,
-        data: usuario,
-      });
+      return res.status(200).json({ ok: true, data });
     } catch (error) {
       console.error(
         "Error en usuarioController.getUserByEmail:",
