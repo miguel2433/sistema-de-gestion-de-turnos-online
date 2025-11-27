@@ -2,6 +2,7 @@ import { z } from "zod";
 import { rolSchema } from "./rol.js";
 
 export const profesionalSchema = z.object({
+  id_profesional: z.coerce.number().int().positive().optional(),
   nombre: z.string({ required_error: "El nombre es obligatorio" }),
   apellido: z.string({ required_error: "El apellido es obligatorio" }),
   email: z

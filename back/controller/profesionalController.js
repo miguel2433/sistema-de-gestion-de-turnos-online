@@ -16,6 +16,37 @@ export const profesionalController = {
       return res.status(500).json({ ok: false, error: error.message });
     }
   },
+  async listarPorEspecialidad(req, res) {
+    try {
+      const { id } = req.params;
+      const profesionales = await profesionalRepository.getByEspecialidad(id);
+      const data = profesionales.map((p) => {
+        const { password, ...rest } = p;
+        const parsed = profesionalSchema.omit({ password: true }).safeParse(rest);
+        return parsed.success ? parsed.data : rest;
+      });
+      return res.status(200).json({ ok: true, data });
+    } catch (error) {
+      return res.status(500).json({ ok: false, error: error.message });
+    }
+  },
+  async listarPorEspecialidadEnSede(req, res) {
+    try {
+      const { idSede, idEspecialidad } = req.params;
+      const profesionales = await profesionalRepository.getByEspecialidadEnSede(
+        idSede,
+        idEspecialidad
+      );
+      const data = profesionales.map((p) => {
+        const { password, ...rest } = p;
+        const parsed = profesionalSchema.omit({ password: true }).safeParse(rest);
+        return parsed.success ? parsed.data : rest;
+      });
+      return res.status(200).json({ ok: true, data });
+    } catch (error) {
+      return res.status(500).json({ ok: false, error: error.message });
+    }
+  },
   async obtener(req, res) {
     try {
       const { id } = req.params;

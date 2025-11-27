@@ -15,12 +15,22 @@ export const authenticate = (req, res, next) => {
   }
 };
 
+const normalizeRole = (rol) => {
+  const s = (typeof rol === "string" ? rol : rol?.nombre_rol || "").toLowerCase();
+  if (s === "admin" || s === "administrador") return "Administrador";
+  if (s === "paciente" || s === "usuario") return "Usuario";
+  if (s === "profesional" || s === "médico" || s === "medico" || s === "doctor") return "Profesional";
+  return typeof rol === "string" ? rol : rol?.nombre_rol;
+};
+
 export const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ ok: false, error: "No autenticado" });
     }
-    if (!roles.includes(req.user.rol)) {
+    const currentRole = normalizeRole(req.user.rol);
+    const allowed = roles.map(normalizeRole);
+    if (!allowed.includes(currentRole)) {
       return res.status(403).json({ ok: false, error: "No autorizado" });
     }
     next();

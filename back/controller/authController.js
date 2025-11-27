@@ -2,13 +2,15 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { usuarioRepository } from "../repositories/usuarioRepository.js";
 import { registerSchema, loginSchema } from "../models/auth.js";
+import { profesionalRepository } from "../repositories/profesionalRepository.js";
 
-const signToken = (user) => {
+const signToken = (user, extra = {}) => {
   return jwt.sign(
     {
       id_usuario: user.id_usuario,
       email: user.email,
       rol: user.rol,
+      ...extra,
     },
     process.env.JWT_SECRET || "dev_secret",
     { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
@@ -81,7 +83,14 @@ export const authController = {
           .json({ ok: false, error: "Credenciales inválidas" });
       }
 
-      const token = signToken(user);
+      let extra = {};
+      try {
+        const prof = await profesionalRepository.findByEmail(user.email);
+        if (prof) {
+          extra.id_profesional = prof.id_profesional;
+        }
+      } catch {}
+      const token = signToken(user, extra);
       res.cookie("token", token, cookieOptions);
 
       const { password: _p, ...userSafe } = user;

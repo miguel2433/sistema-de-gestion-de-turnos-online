@@ -23,6 +23,52 @@ export const turnoRepository = {
         : null,
     }));
   },
+  async getByUsuarioId(idUsuario) {
+    const rows = await db("turno as t")
+      .leftJoin("especialidad as e", "t.id_especialidad", "e.id_especialidad")
+      .where({ "t.id_usuario": idUsuario })
+      .select(
+        "t.*",
+        "e.id_especialidad as e_id_especialidad",
+        "e.nombre_especialidad as e_nombre_especialidad",
+        "e.descripcion as e_descripcion",
+        "e.activa as e_activa"
+      );
+    return rows.map((row) => ({
+      ...row,
+      especialidad: row.e_id_especialidad
+        ? {
+            id_especialidad: row.e_id_especialidad,
+            nombre_especialidad: row.e_nombre_especialidad,
+            descripcion: row.e_descripcion,
+            activa: row.e_activa,
+          }
+        : null,
+    }));
+  },
+  async getByProfesionalId(idProfesional) {
+    const rows = await db("turno as t")
+      .leftJoin("especialidad as e", "t.id_especialidad", "e.id_especialidad")
+      .where({ "t.id_profesional": idProfesional })
+      .select(
+        "t.*",
+        "e.id_especialidad as e_id_especialidad",
+        "e.nombre_especialidad as e_nombre_especialidad",
+        "e.descripcion as e_descripcion",
+        "e.activa as e_activa"
+      );
+    return rows.map((row) => ({
+      ...row,
+      especialidad: row.e_id_especialidad
+        ? {
+            id_especialidad: row.e_id_especialidad,
+            nombre_especialidad: row.e_nombre_especialidad,
+            descripcion: row.e_descripcion,
+            activa: row.e_activa,
+          }
+        : null,
+    }));
+  },
   async getById(id) {
     const row = await db("turno as t")
       .leftJoin("especialidad as e", "t.id_especialidad", "e.id_especialidad")
@@ -78,7 +124,22 @@ export const turnoRepository = {
       });
     return this.getById(id);
   },
+  async getByFechaProfesionalYSede(fecha, idProfesional, idSede) {
+    return db("turno")
+      .where({
+        fecha_turno: fecha,
+        id_profesional: idProfesional,
+        id_sede: idSede,
+      })
+      .orderBy("hora_turno", "asc");
+  },
   async remove(id) {
     return db("turno").where({ id_turno: id }).del();
+  },
+  async updateEstado(id, estado) {
+    await db("turno")
+      .where({ id_turno: id })
+      .update({ estado });
+    return this.getById(id);
   },
 };

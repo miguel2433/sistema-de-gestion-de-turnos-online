@@ -21,15 +21,34 @@ export const profesionalRepository = {
         : null,
     }));
   },
-  async getById(id) {
-    const row = await db("profesional as p")
+  async getByEspecialidadEnSede(idSede, idEspecialidad) {
+    const rows = await db("profesional as p")
       .leftJoin("rol as r", "p.id_rol", "r.id_rol")
-      .where({ "p.id_profesional": id })
+      .join("especialidad_sede as es", "es.id_especialidad", "p.id_especialidad")
+      .where({ "es.id_sede": idSede, "p.id_especialidad": idEspecialidad })
       .select(
         "p.*",
         "r.id_rol as r_id_rol",
         "r.nombre_rol as r_nombre_rol",
         "r.descripcion as r_descripcion"
+      );
+    return rows.map((row) => ({
+      ...row,
+      rol: row.r_id_rol
+        ? {
+            id_rol: row.r_id_rol,
+            nombre_rol: row.r_nombre_rol,
+            descripcion: row.r_descripcion,
+          }
+        : null,
+    }));
+  },
+  async getById(id) {
+    const row = await db("profesional as p")
+      .leftJoin("rol as r", "p.id_rol", "r.id_rol")
+      .where({ "p.id_profesional": id })
+      .select(
+        "*"
       )
       .first();
     if (!row) return null;
@@ -43,6 +62,27 @@ export const profesionalRepository = {
           }
         : null,
     };
+  },
+  async getByEspecialidad(idEspecialidad) {
+    const rows = await db("profesional as p")
+      .leftJoin("rol as r", "p.id_rol", "r.id_rol")
+      .where({ "p.id_especialidad": idEspecialidad })
+      .select(
+        "p.*",
+        "r.id_rol as r_id_rol",
+        "r.nombre_rol as r_nombre_rol",
+        "r.descripcion as r_descripcion"
+      );
+    return rows.map((row) => ({
+      ...row,
+      rol: row.r_id_rol
+        ? {
+            id_rol: row.r_id_rol,
+            nombre_rol: row.r_nombre_rol,
+            descripcion: row.r_descripcion,
+          }
+        : null,
+    }));
   },
   async findByEmail(email) {
     const row = await db("profesional as p")

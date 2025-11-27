@@ -1,10 +1,24 @@
 import { sedeRepository } from "../repositories/sedeRepository.js";
 import { sedeSchema } from "../models/sede.js";
+import { especialidadSedeRepository } from "../repositories/especialidadSedeRepository.js";
 
 export const sedeController = {
   async listar(req, res) {
     try {
       const data = await sedeRepository.getAll();
+      return res.status(200).json({ ok: true, data });
+    } catch (error) {
+      return res.status(500).json({ ok: false, error: error.message });
+    }
+  },
+  async especialidadesPorSede(req, res) {
+    try {
+      const { id } = req.params;
+      const sede = await sedeRepository.getById(id);
+      if (!sede) {
+        return res.status(404).json({ ok: false, error: "Sede no encontrada" });
+      }
+      const data = await especialidadSedeRepository.getEspecialidadesBySede(id);
       return res.status(200).json({ ok: true, data });
     } catch (error) {
       return res.status(500).json({ ok: false, error: error.message });
