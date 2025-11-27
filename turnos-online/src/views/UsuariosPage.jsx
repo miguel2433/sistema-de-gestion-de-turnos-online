@@ -78,7 +78,7 @@ export default function UsuariosPage() {
         ) : (
           <table className="min-w-full text-xs">
             <thead className="bg-slate-50 text-slate-600">
-              <tr>
+              <tr className='font-mono'>
                 <th className="px-3 py-2 text-left">Nombre</th>
                 <th className="px-3 py-2 text-left">Email</th>
                 <th className="px-3 py-2 text-left">DNI</th>
@@ -87,7 +87,7 @@ export default function UsuariosPage() {
             </thead>
             <tbody>
               {items.map((u) => (
-                <tr key={u.id_usuario} className="border-t border-slate-100">
+                <tr key={u.id_usuario} className="border-t border-slate-100 font-mono">
                   <td className="px-3 py-2">
                     {u.nombre} {u.apellido}
                   </td>

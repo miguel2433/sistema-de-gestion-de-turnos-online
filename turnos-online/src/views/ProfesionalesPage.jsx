@@ -292,7 +292,7 @@ export default function ProfesionalesPage({ isAdmin }) {
         <p className="text-sm text-slate-600">Cargando...</p>
       ) : (
         <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full text-xs">
+          <table className="min-w-full text-xs font-mono">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="px-3 py-2 text-left">Nombre</th>
