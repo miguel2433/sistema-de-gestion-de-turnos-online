@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL ?? "http://10.120.2.227:5000";
 
 export async function apiFetch(path, options = {}) {
   const { method = "GET", body, headers, ...rest } = options;

@@ -17,10 +17,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: true,
     credentials: true,
   })
 );
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -35,6 +36,6 @@ app.use("/especialidades", especialidadRoutes);
 app.use("/profesionales", profesionalRoutes);
 app.use("/sedes", sedeRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(5000, "0.0.0.0", () => {
+  console.log("Server en LAN escuchando en puerto 5000");
 });
