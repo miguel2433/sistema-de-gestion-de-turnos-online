@@ -449,6 +449,7 @@ export default function TurnosPage({ isAdmin, isProfesional, isUsuario, user }) 
               <tr>
                 <th className="px-3 py-2 text-left">Fecha</th>
                 <th className="px-3 py-2 text-left">Hora</th>
+                <th className="px-3 py-2 text-left">Sede</th>
                 <th className="px-3 py-2 text-left">Estado</th>
                 <th className="px-3 py-2 text-left">Especialidad</th>
                 <th className="px-3 py-2 text-left">Profesional</th>
@@ -461,6 +462,7 @@ export default function TurnosPage({ isAdmin, isProfesional, isUsuario, user }) 
                 <tr key={t.id_turno} className="border-t border-slate-100">
                   <td className="px-3 py-2">{new Date(t.fecha_turno).toLocaleDateString('es-ES')}</td>
                   <td className="px-3 py-2">{t.hora_turno}</td>
+                  <td className="px-3 py-2">{sedes.find((s) => s.id_sede === t.id_sede)?.nombre}</td>
                   <td className="px-3 py-2">{t.estado}</td>
                   <td className="px-3 py-2">{getEspecialidadNombre(t)}</td>
                   <td className="px-3 py-2">{getProfesionalNombre(t.id_profesional)}</td>
