@@ -459,7 +459,7 @@ export default function TurnosPage({ isAdmin, isProfesional, isUsuario, user }) 
             <tbody>
               {items.map((t) => (
                 <tr key={t.id_turno} className="border-t border-slate-100">
-                  <td className="px-3 py-2">{t.fecha_turno}</td>
+                  <td className="px-3 py-2">{new Date(t.fecha_turno).toLocaleDateString('es-ES')}</td>
                   <td className="px-3 py-2">{t.hora_turno}</td>
                   <td className="px-3 py-2">{t.estado}</td>
                   <td className="px-3 py-2">{getEspecialidadNombre(t)}</td>
