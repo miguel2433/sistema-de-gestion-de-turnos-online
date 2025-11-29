@@ -8,4 +8,16 @@ export const especialidadSedeRepository = {
       .select("e.*");
     return rows;
   },
+  async add(idSede, idEspecialidad) {
+    const [id] = await db("especialidad_sede").insert({
+      id_sede: idSede,
+      id_especialidad: idEspecialidad,
+    });
+    return db("especialidad_sede").where({ id }).first();
+  },
+  async remove(idSede, idEspecialidad) {
+    return db("especialidad_sede")
+      .where({ id_sede: idSede, id_especialidad: idEspecialidad })
+      .del();
+  },
 };

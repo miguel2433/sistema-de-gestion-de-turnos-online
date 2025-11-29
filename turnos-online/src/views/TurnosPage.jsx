@@ -184,6 +184,11 @@ export default function TurnosPage({ isAdmin, isProfesional, isUsuario, user }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!(isAdmin || isUsuario)) return;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (form.fecha_turno && form.fecha_turno < todayStr) {
+      setFormError('No se puede crear o reprogramar un turno en una fecha anterior a hoy');
+      return;
+    }
     setSaving(true);
     setFormError(null);
     console.log(`[handleSubmit] Formulario actual:`, form);

@@ -133,6 +133,18 @@ export const turnoRepository = {
       })
       .orderBy("hora_turno", "asc");
   },
+  async marcarNoPresentadosVencidos(fechaActual, horaActual) {
+    await db("turno")
+      .whereIn("estado", ["pendiente", "confirmado"])
+      .andWhere((qb) => {
+        qb.where("fecha_turno", "<", fechaActual).orWhere((qb2) => {
+          qb2
+            .where("fecha_turno", "=", fechaActual)
+            .andWhere("hora_turno", "<", horaActual);
+        });
+      })
+      .update({ estado: "no_presentado" });
+  },
   async remove(id) {
     return db("turno").where({ id_turno: id }).del();
   },

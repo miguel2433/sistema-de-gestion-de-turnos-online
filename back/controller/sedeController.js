@@ -24,6 +24,45 @@ export const sedeController = {
       return res.status(500).json({ ok: false, error: error.message });
     }
   },
+  async agregarEspecialidad(req, res) {
+    try {
+      const { id } = req.params;
+      const { id_especialidad } = req.body || {};
+      if (!id_especialidad) {
+        return res.status(400).json({ ok: false, error: "La especialidad es obligatoria" });
+      }
+      const sede = await sedeRepository.getById(id);
+      if (!sede) {
+        return res.status(404).json({ ok: false, error: "Sede no encontrada" });
+      }
+      try {
+        await especialidadSedeRepository.add(Number(id), Number(id_especialidad));
+      } catch (error) {
+        if (error.code === "ER_DUP_ENTRY") {
+          return res.status(400).json({ ok: false, error: "La especialidad ya está asociada a esta sede" });
+        }
+        throw error;
+      }
+      const data = await especialidadSedeRepository.getEspecialidadesBySede(id);
+      return res.status(200).json({ ok: true, data });
+    } catch (error) {
+      return res.status(500).json({ ok: false, error: error.message });
+    }
+  },
+  async quitarEspecialidad(req, res) {
+    try {
+      const { id, idEspecialidad } = req.params;
+      const sede = await sedeRepository.getById(id);
+      if (!sede) {
+        return res.status(404).json({ ok: false, error: "Sede no encontrada" });
+      }
+      await especialidadSedeRepository.remove(Number(id), Number(idEspecialidad));
+      const data = await especialidadSedeRepository.getEspecialidadesBySede(id);
+      return res.status(200).json({ ok: true, data });
+    } catch (error) {
+      return res.status(500).json({ ok: false, error: error.message });
+    }
+  },
   async obtener(req, res) {
     try {
       const { id } = req.params;

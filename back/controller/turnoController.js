@@ -38,9 +38,23 @@ const obtenerProximaHoraDisponible = (horarioApertura, horarioCierre, turnos) =>
   return null;
 };
 
+const esFechaEnPasado = (fechaStr) => {
+  if (!fechaStr) return false;
+  const hoy = new Date().toISOString().slice(0, 10);
+  return fechaStr < hoy;
+};
+
+const marcarTurnosNoPresentados = async () => {
+  const ahora = new Date();
+  const fechaActual = ahora.toISOString().slice(0, 10);
+  const horaActual = ahora.toTimeString().slice(0, 8);
+  await turnoRepository.marcarNoPresentadosVencidos(fechaActual, horaActual);
+};
+
 export const turnoController = {
   async listar(req, res) {
     try {
+      await marcarTurnosNoPresentados();
       const data = await turnoRepository.getAll();
       return res.status(200).json({ ok: true, data });
     } catch (error) {
@@ -53,6 +67,7 @@ export const turnoController = {
       if (!idUsuario) {
         return res.status(401).json({ ok: false, error: "No autenticado" });
       }
+      await marcarTurnosNoPresentados();
       const data = await turnoRepository.getByUsuarioId(idUsuario);
       return res.status(200).json({ ok: true, data });
     } catch (error) {
@@ -73,6 +88,7 @@ export const turnoController = {
         }
         idProfesional = prof.id_profesional;
       }
+      await marcarTurnosNoPresentados();
       const data = await turnoRepository.getByProfesionalId(idProfesional);
       return res.status(200).json({ ok: true, data });
     } catch (error) {
@@ -103,6 +119,20 @@ export const turnoController = {
       const roleName = normalizeRole(req.user?.rol);
       if (roleName === "Usuario") {
         data.id_usuario = req.user.id_usuario;
+      }
+
+      if (roleName === "Administrador" && !data.id_usuario) {
+        return res.status(400).json({
+          ok: false,
+          error: "El usuario es obligatorio para crear un turno desde administración",
+        });
+      }
+
+      if (esFechaEnPasado(data.fecha_turno)) {
+        return res.status(400).json({
+          ok: false,
+          error: "No se puede crear un turno en una fecha anterior a hoy",
+        });
       }
 
       // Validar que la especialidad esté disponible en la sede
@@ -168,7 +198,14 @@ export const turnoController = {
       }
       const exists = await turnoRepository.getById(id);
       if (!exists) return res.status(404).json({ ok: false, error: "No encontrado" });
-      const updated = await turnoRepository.update(id, parse.data);
+      const data = parse.data;
+      if (data.fecha_turno && esFechaEnPasado(data.fecha_turno)) {
+        return res.status(400).json({
+          ok: false,
+          error: "No se puede reprogramar un turno a una fecha anterior a hoy",
+        });
+      }
+      const updated = await turnoRepository.update(id, data);
       return res.status(200).json({ ok: true, data: updated });
     } catch (error) {
       return res.status(500).json({ ok: false, error: error.message });

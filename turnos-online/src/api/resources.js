@@ -88,6 +88,17 @@ export const sedesApi = {
       method: "DELETE",
     });
   },
+  addEspecialidad(idSede, idEspecialidad) {
+    return apiFetch(`/sedes/${idSede}/especialidades`, {
+      method: "POST",
+      body: { id_especialidad: idEspecialidad },
+    });
+  },
+  removeEspecialidad(idSede, idEspecialidad) {
+    return apiFetch(`/sedes/${idSede}/especialidades/${idEspecialidad}`, {
+      method: "DELETE",
+    });
+  },
 };
 
 export const turnosApi = {

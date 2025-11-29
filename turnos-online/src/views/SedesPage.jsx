@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { sedesApi } from '../api/resources.js';
+import { sedesApi, especialidadesApi } from '../api/resources.js';
 
 export default function SedesPage({ isAdmin }) {
   const [items, setItems] = useState([]);
@@ -17,13 +17,20 @@ export default function SedesPage({ isAdmin }) {
     horario_apertura: '',
     horario_cierre: '',
   });
+  const [especialidades, setEspecialidades] = useState([]);
+  const [especialidadesAsignadas, setEspecialidadesAsignadas] = useState([]);
+  const [selectedEspecialidadId, setSelectedEspecialidadId] = useState('');
 
   const load = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await sedesApi.list();
-      setItems(data);
+      const [sedes, esp] = await Promise.all([
+        sedesApi.list(),
+        especialidadesApi.list(),
+      ]);
+      setItems(sedes);
+      setEspecialidades(esp);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -47,9 +54,11 @@ export default function SedesPage({ isAdmin }) {
       horario_cierre: '',
     });
     setFormError(null);
+    setEspecialidadesAsignadas([]);
+    setSelectedEspecialidadId('');
   };
 
-  const startEdit = (s) => {
+  const startEdit = async (s) => {
     setMode('edit');
     setEditingId(s.id_sede);
     setForm({
@@ -61,12 +70,20 @@ export default function SedesPage({ isAdmin }) {
       horario_cierre: s.horario_cierre || '',
     });
     setFormError(null);
+    try {
+      const espec = await sedesApi.especialidades(s.id_sede);
+      setEspecialidadesAsignadas(espec);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const cancelForm = () => {
     setMode(null);
     setEditingId(null);
     setFormError(null);
+    setEspecialidadesAsignadas([]);
+    setSelectedEspecialidadId('');
   };
 
   const handleChange = (e) => {
@@ -102,6 +119,29 @@ export default function SedesPage({ isAdmin }) {
       setFormError(e2.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const addEspecialidadToSede = async () => {
+    if (!isAdmin || !editingId || !selectedEspecialidadId) return;
+    try {
+      await sedesApi.addEspecialidad(editingId, Number(selectedEspecialidadId));
+      const espec = await sedesApi.especialidades(editingId);
+      setEspecialidadesAsignadas(espec);
+      setSelectedEspecialidadId('');
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
+  const removeEspecialidadFromSede = async (idEspecialidad) => {
+    if (!isAdmin || !editingId) return;
+    try {
+      await sedesApi.removeEspecialidad(editingId, idEspecialidad);
+      const espec = await sedesApi.especialidades(editingId);
+      setEspecialidadesAsignadas(espec);
+    } catch (e) {
+      alert(e.message);
     }
   };
 
@@ -210,6 +250,52 @@ export default function SedesPage({ isAdmin }) {
                 Activa
               </label>
             </div>
+            {mode === 'edit' && (
+              <div className="col-span-2 mt-3 border-t pt-3">
+                <div className="text-xs font-semibold mb-2">Especialidades de la sede</div>
+                <div className="flex items-center gap-2 mb-2 text-xs">
+                  <select
+                    value={selectedEspecialidadId}
+                    onChange={(e) => setSelectedEspecialidadId(e.target.value)}
+                    className="border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-slate-400 flex-1"
+                  >
+                    <option value="">Seleccionar especialidad...</option>
+                    {especialidades.map((e) => (
+                      <option key={e.id_especialidad} value={String(e.id_especialidad)}>
+                        {e.nombre_especialidad}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={addEspecialidadToSede}
+                    className="px-3 py-1.5 rounded bg-emerald-600 text-white hover:bg-emerald-500"
+                  >
+                    Agregar
+                  </button>
+                </div>
+                <div className="text-xs bg-slate-50 border border-slate-200 rounded p-2 max-h-40 overflow-y-auto">
+                  {especialidadesAsignadas.length === 0 && (
+                    <div className="text-slate-500">No hay especialidades asociadas.</div>
+                  )}
+                  {especialidadesAsignadas.map((e) => (
+                    <div
+                      key={e.id_especialidad}
+                      className="flex items-center justify-between py-0.5"
+                    >
+                      <span>{e.nombre_especialidad}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeEspecialidadFromSede(e.id_especialidad)}
+                        className="text-[11px] text-red-600 hover:underline"
+                      >
+                        Quitar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="col-span-2 flex justify-end gap-2 mt-2 text-xs">
               <button
                 type="button"

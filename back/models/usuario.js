@@ -3,6 +3,7 @@ import {rolSchema} from "./rol.js"
 
 
 export const usuarioSchema = z.object({
+  id_usuario: z.number(),
   nombre: z.string({
     required_error: "el nombre es obligatorio",
     invalid_type_error: "el nombre debe ser un texto",

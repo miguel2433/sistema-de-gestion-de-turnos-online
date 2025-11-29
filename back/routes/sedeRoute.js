@@ -9,5 +9,7 @@ router.get("/:id", sedeController.obtener);
 router.post("/", sedeController.crear);
 router.put("/:id", sedeController.actualizar);
 router.delete("/:id", sedeController.eliminar);
+router.post("/:id/especialidades", sedeController.agregarEspecialidad);
+router.delete("/:id/especialidades/:idEspecialidad", sedeController.quitarEspecialidad);
 
 export default router;
