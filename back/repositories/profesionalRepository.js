@@ -21,32 +21,35 @@ export const profesionalRepository = {
         : null,
     }));
   },
-  async getByEspecialidadEnSede(idSede, idEspecialidad) {
-    const rows = await db("profesional as p")
-      .leftJoin("rol as r", "p.id_rol", "r.id_rol")
-      .join(
-        "especialidad_sede as es",
-        "es.id_especialidad",
-        "p.id_especialidad"
-      )
-      .where({ "p.id_sede": idSede, "p.id_especialidad": idEspecialidad })
-      .select(
-        "p.*",
-        "r.id_rol as r_id_rol",
-        "r.nombre_rol as r_nombre_rol",
-        "r.descripcion as r_descripcion"
-      );
-    return rows.map((row) => ({
-      ...row,
-      rol: row.r_id_rol
-        ? {
-            id_rol: row.r_id_rol,
-            nombre_rol: row.r_nombre_rol,
-            descripcion: row.r_descripcion,
-          }
-        : null,
-    }));
-  },
+async getByEspecialidadEnSede(idSede, idEspecialidad) {
+  const rows = await db("profesional as p")
+    .leftJoin("rol as r", "p.id_rol", "r.id_rol")
+    .join("especialidad_sede as es", function () {
+      this.on("es.id_especialidad", "p.id_especialidad")
+          .andOn("es.id_sede", "p.id_sede");
+    })
+    .where({
+      "p.id_sede": idSede,
+      "p.id_especialidad": idEspecialidad,
+    })
+    .select(
+      "p.*",
+      "r.id_rol as r_id_rol",
+      "r.nombre_rol as r_nombre_rol",
+      "r.descripcion as r_descripcion"
+    );
+
+  return rows.map((row) => ({
+    ...row,
+    rol: row.r_id_rol
+      ? {
+          id_rol: row.r_id_rol,
+          nombre_rol: row.r_nombre_rol,
+          descripcion: row.r_descripcion,
+        }
+      : null,
+  }));
+},
   async getById(id) {
     const row = await db("profesional as p")
       .leftJoin("rol as r", "p.id_rol", "r.id_rol")
@@ -128,6 +131,7 @@ export const profesionalRepository = {
       activo: data.activo ?? true,
       id_especialidad: data.id_especialidad,
       id_rol: idRol,
+      id_sede: data.id_sede
     });
     return this.getById(id);
   },
