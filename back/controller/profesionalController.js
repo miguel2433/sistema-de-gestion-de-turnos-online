@@ -109,4 +109,7 @@ export const profesionalController = {
       return res.status(500).json({ ok: false, error: error.message });
     }
   },
+  async listarPorEspecialidadSede(req,res){
+    
+  }
 };

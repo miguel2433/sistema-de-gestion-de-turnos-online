@@ -169,6 +169,7 @@ export default function TurnosPage({ isAdmin, isProfesional, isUsuario, user }) 
             ? await profesionalesApi.byEspecialidadEnSede(form.id_sede, value)
             : await profesionalesApi.byEspecialidad(value);
           setProfesionalesFiltrados(profs);
+          console.log("PROFES RTA BACK:", profs);
           console.log(`[handleChange] Profesionales cargados para especialidad ${value} en sede ${form.id_sede}:`, profs);
         } catch (err) {
           console.error(err);

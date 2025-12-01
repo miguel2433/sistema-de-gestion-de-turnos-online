@@ -31,4 +31,5 @@ export const especialidadRepository = {
   async remove(id) {
     return db("especialidad").where({ id_especialidad: id }).del();
   },
+
 };

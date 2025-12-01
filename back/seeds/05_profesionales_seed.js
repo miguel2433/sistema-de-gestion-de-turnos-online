@@ -23,6 +23,7 @@ export async function seed(knex) {
       id_rol: 2,
       activo: true,
       id_especialidad: 1, 
+      id_sede:3
     },
     {
       nombre: "Martín",
@@ -34,6 +35,7 @@ export async function seed(knex) {
       id_rol: 2,
       activo: true,
       id_especialidad: 2, // Dermatología
+      id_sede:2
     },
     {
       nombre: "Ana",
@@ -45,6 +47,7 @@ export async function seed(knex) {
       id_rol: 2,
       activo: true,
       id_especialidad: 3, // Pediatría
+      id_sede:1
     },
   ]);
 }

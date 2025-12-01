@@ -24,8 +24,12 @@ export const profesionalRepository = {
   async getByEspecialidadEnSede(idSede, idEspecialidad) {
     const rows = await db("profesional as p")
       .leftJoin("rol as r", "p.id_rol", "r.id_rol")
-      .join("especialidad_sede as es", "es.id_especialidad", "p.id_especialidad")
-      .where({ "es.id_sede": idSede, "p.id_especialidad": idEspecialidad })
+      .join(
+        "especialidad_sede as es",
+        "es.id_especialidad",
+        "p.id_especialidad"
+      )
+      .where({ "p.id_sede": idSede, "p.id_especialidad": idEspecialidad })
       .select(
         "p.*",
         "r.id_rol as r_id_rol",
@@ -47,9 +51,7 @@ export const profesionalRepository = {
     const row = await db("profesional as p")
       .leftJoin("rol as r", "p.id_rol", "r.id_rol")
       .where({ "p.id_profesional": id })
-      .select(
-        "*"
-      )
+      .select("*")
       .first();
     if (!row) return null;
     return {
@@ -141,11 +143,12 @@ export const profesionalRepository = {
         password: data.password,
         activo: data.activo,
         id_especialidad: data.id_especialidad,
+        id_sede: data.id_sede,
         id_rol: data.rol?.id_rol ?? undefined,
       });
     return this.getById(id);
   },
   async remove(id) {
     return db("profesional").where({ id_profesional: id }).del();
-  },
+  }
 };

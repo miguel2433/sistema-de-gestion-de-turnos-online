@@ -4,12 +4,17 @@
  */
 export async function up(knex) {
   await knex.schema.alterTable("profesional", (table) => {
-    table.integer("id_rol").unsigned().references("id_rol").inTable("rol");
+    table
+      .integer("id_sede")
+      .unsigned()
+      .references("id_sede")
+      .inTable("sede")
+      .onDelete("SET NULL"); // opcional
   });
 }
 
 export async function down(knex) {
   await knex.schema.alterTable("profesional", (table) => {
-    table.dropColumn("id_rol");
+    table.dropColumn("id_sede");
   });
 }

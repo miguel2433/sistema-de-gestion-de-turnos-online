@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { profesionalesApi, especialidadesApi } from '../api/resources.js';
+import { profesionalesApi, especialidadesApi,sedesApi } from '../api/resources.js';
 
 export default function ProfesionalesPage({ isAdmin }) {
   const [items, setItems] = useState([]);
   const [especialidades, setEspecialidades] = useState([]);
+  const [sedes,setSedes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState(null);
@@ -18,19 +19,26 @@ export default function ProfesionalesPage({ isAdmin }) {
     matricula: '',
     password: '',
     id_especialidad: '',
+    id_sede: '',
     activo: true,
   });
+  const [especialidadesDisponibles, setEspecialidadesDisponibles] = useState([]);
+
+
 
   const load = async () => {
     setLoading(true);
     setError(null);
     try {
-      const [profesionales, especialidades] = await Promise.all([
+      const [profesionales, especialidades, sedes] = await Promise.all([
         profesionalesApi.list(),
         especialidadesApi.list(),
+        sedesApi.list(),
+
       ]);
       setItems(profesionales);
       setEspecialidades(especialidades);
+      setSedes(sedes);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -53,6 +61,7 @@ export default function ProfesionalesPage({ isAdmin }) {
       matricula: '',
       password: '',
       id_especialidad: '',
+      id_sede:'',
       activo: true,
     });
     setFormError(null);
@@ -69,6 +78,7 @@ export default function ProfesionalesPage({ isAdmin }) {
       matricula: p.matricula || '',
       password: '',
       id_especialidad: p.id_especialidad?.toString() || '',
+      id_sede: p.id_sede?.toString() || '',
       activo: Boolean(p.activo ?? true),
     });
     setFormError(null);
@@ -87,6 +97,19 @@ export default function ProfesionalesPage({ isAdmin }) {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
+  useEffect(() => {
+    async function cargarEspecialidades() {
+      if (!form.id_sede) {
+        setEspecialidadesDisponibles([]);
+        return;
+      }
+
+      const data = await sedesApi.especialidades(form.id_sede);
+      setEspecialidadesDisponibles(data);
+    }
+
+    cargarEspecialidades();
+  }, [form.id_sede]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,6 +124,7 @@ export default function ProfesionalesPage({ isAdmin }) {
         telefono: form.telefono || undefined,
         matricula: form.matricula,
         id_especialidad: form.id_especialidad ? Number(form.id_especialidad) : undefined,
+        id_sede: form.id_sede ? Number(form.id_sede) : undefined,
         activo: form.activo,
       };
 
@@ -114,6 +138,7 @@ export default function ProfesionalesPage({ isAdmin }) {
         if (form.password) {
           payload.password = form.password;
         }
+        console.log(payload)
         await profesionalesApi.update(editingId, payload);
       }
 
@@ -141,6 +166,10 @@ export default function ProfesionalesPage({ isAdmin }) {
     const e = especialidades.find((x) => x.id_especialidad === id);
     return e ? e.nombre_especialidad : id;
   };
+  const getSedeNombre = (id) =>{
+    const s = sedes.find((x) => x.id_sede === id);
+    return s ? s.nombre : id;
+  }
 
   return (
     <section className="space-y-4">
@@ -247,9 +276,27 @@ export default function ProfesionalesPage({ isAdmin }) {
                 required
               >
                 <option value="">Seleccionar...</option>
-                {especialidades.map((e) => (
+
+                {especialidadesDisponibles.map((e) => (
                   <option key={e.id_especialidad} value={e.id_especialidad}>
                     {e.nombre_especialidad}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-slate-600 mb-1">Sede</label>
+              <select
+                name="id_sede"
+                value={form.id_sede}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-slate-400"
+                required
+              >
+                <option value="">Seleccionar...</option>
+                {sedes.map((s) => (
+                  <option key={s.id_sede} value={s.id_sede}>
+                    {s.nombre}
                   </option>
                 ))}
               </select>
@@ -299,6 +346,7 @@ export default function ProfesionalesPage({ isAdmin }) {
                 <th className="px-3 py-2 text-left">Email</th>
                 <th className="px-3 py-2 text-left">Matrícula</th>
                 <th className="px-3 py-2 text-left">Especialidad</th>
+                <th className="px-3 py-2 text-left">Sede</th>
                 <th className="px-3 py-2 text-left">Activo</th>
                 {isAdmin && <th className="px-3 py-2 text-left">Acciones</th>}
               </tr>
@@ -312,7 +360,9 @@ export default function ProfesionalesPage({ isAdmin }) {
                   <td className="px-3 py-2">{p.email}</td>
                   <td className="px-3 py-2">{p.matricula}</td>
                   <td className="px-3 py-2">{getEspecialidadNombre(p.id_especialidad)}</td>
+                  <td className="px-3 py-2">{getSedeNombre(p.id_sede)}</td>
                   <td className="px-3 py-2">{p.activo ? 'Sí' : 'No'}</td>
+
                   {isAdmin && (
                     <td className="px-3 py-2 space-x-2">
                       <button

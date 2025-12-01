@@ -10,5 +10,7 @@ export async function up(knex) {
 }
 
 export async function down(knex) {
-  await knex.schema.dropTableIfExists("usuario");
+    await knex.schema.alterTable("usuario", (table) => {
+      table.dropColumn("id_rol");
+    });
 }
