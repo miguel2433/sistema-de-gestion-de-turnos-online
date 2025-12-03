@@ -190,6 +190,15 @@ export default function TurnosPage({ isAdmin, isProfesional, isUsuario, user }) 
       setFormError('No se puede crear o reprogramar un turno en una fecha anterior a hoy');
       return;
     }
+    // Obtener hora actual en formato HH:MM
+    const now = new Date();
+    const currentHourStr = now.toTimeString().slice(0, 5); // "HH:MM"
+
+    // Validar hora solo si la fecha es hoy
+    if (form.fecha_turno === todayStr && form.hora_turno < currentHourStr) {
+      setFormError('No se puede crear o reprogramar un turno en una hora anterior a la hora actual');
+      return;
+    }
     setSaving(true);
     setFormError(null);
     console.log(`[handleSubmit] Formulario actual:`, form);
